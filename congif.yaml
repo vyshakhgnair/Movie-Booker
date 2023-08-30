@@ -1,0 +1,82 @@
+flask_app_config:
+  SQLALCHEMY_DATABASE_URI: 'sqlite:///movie.db'
+  SECRET_KEY: 'your_secret_key_here'
+  PERMANENT_SESSION_LIFETIME: 1800
+
+redis_config:
+  host: 'localhost'
+  port: 6379
+  db: 0
+  decode_responses: true
+
+db_models:
+  - user
+  - venue
+  - show
+  - venueshow
+  - booking
+  - statushistory
+
+cors_config:
+  resources:
+    "/api/*":
+      origins: "http://localhost:5173"
+
+flask_routes:
+  - /api/register
+  - /api/login
+  - /api/login-admin
+  - /api/logout
+  - /api/reset
+  - /api/create-venue
+  - /api/create-show
+  - /api/create-venueshow
+  - /api/shows
+  - /api/venues-with-shows
+  - /api/delete-show/<int:venue_id>/<int:show_id>
+  - /api/delete-venue/<int:venue_id>
+  - /api/show/<int:show_id>
+  - /api/update-show/<int:show_id>
+  - /api/venue/<int:venue_id>
+  - /api/edit-venue/<int:venue_id>
+  - /api/booking-analytics
+  - /api/genres
+  - /api/cities
+  - /api/search
+  - /api/shows/<int:venueid>/<int:showid>
+  - /api/bookings
+  - /api/bookings/<int:user_id>
+  - /api/<int:booking_id>/<int:rating>
+  - /api/cancel/<int:booking_id>
+  - /api/download/<int:user_id>
+  - /api/protected
+  - /api/admin-monthly/<int:venueid>/<int:userid>
+
+celery_config:
+  app:
+    celery_broker: 'redis://localhost:6379/0'
+    backend: 'redis://localhost:6379/1'
+
+  celeryapp:
+    name: your_app_name
+    broker: %(app:celery_broker)s
+    backend: %(app:backend)s
+    conf:
+      beat_schedule:
+        daily-job:
+          task: 'app.daily_job'
+          schedule: 86400  # Run every 24hr (in seconds)
+        monthly-job:
+          task: 'app.monthly_job'
+          schedule: 2592000  # Run every 30 days (in seconds)
+        monthly-job2:
+          task: 'app.admin_monthly_job'
+          schedule: 2592000  # Run every 30 days (in seconds)
+      timezone: 'UTC'
+  email:
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  smtp_username: "vyshakhgnair.cvr@gmail.com"
+  smtp_password: "your_smtp_password"  # Replace with the actual password or use environment variables
+  sender_email: "vyshakhgnair.cvr@gmail.com"
+
